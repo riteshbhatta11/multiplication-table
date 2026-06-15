@@ -14,6 +14,10 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Quicksand', sans-serif;
       background: linear-gradient(145deg, #2b1e4a 0%, #1a1a3e 100%);
@@ -86,6 +90,7 @@
       margin-bottom: 1.8rem;
       letter-spacing: -0.5px;
       text-shadow: 2px 2px 0 rgba(255, 255, 200, 0.6);
+      scroll-margin-top: 2rem;
     }
     h1 span {
       background: #ffd78b;
@@ -101,6 +106,7 @@
       background: rgba(255,255,255,0.5);
       border-radius: 3rem;
       padding: 0.4rem;
+      scroll-margin-top: 2rem;
     }
 
     .tab-btn {
@@ -182,6 +188,7 @@
       box-shadow: 0 10px 18px rgba(247, 119, 94, 0.4);
       border: 1px solid rgba(255,255,200,0.5);
       letter-spacing: 0.5px;
+      text-decoration: none;
     }
 
     .btn:hover {
@@ -197,6 +204,11 @@
     .btn-secondary {
       background: linear-gradient(135deg, #b294d6, #8f6bb3);
       box-shadow: 0 10px 18px rgba(143, 107, 179, 0.4);
+    }
+
+    .btn-tertiary {
+      background: linear-gradient(135deg, #6cbe9a, #4a9e7b);
+      box-shadow: 0 10px 18px rgba(74, 158, 123, 0.4);
     }
 
     .btn-small {
@@ -220,6 +232,7 @@
       max-height: 380px;
       overflow-y: auto;
       padding-right: 0.5rem;
+      scroll-margin-top: 2rem;
     }
 
     .question-item {
@@ -368,12 +381,68 @@
     .declined { background: #ffd9d9; color: #b71c1c; }
     .same { background: #fff3e0; color: #e65100; }
 
+    /* Go to Top Button */
+    .go-to-top-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f9a66c, #f7775e);
+      box-shadow: 0 8px 20px rgba(247, 119, 94, 0.5);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+    }
+
+    .go-to-top-btn.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .go-to-top-btn:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 12px 25px rgba(247, 119, 94, 0.7);
+    }
+
+    .go-to-top-btn:active {
+      transform: translateY(0) scale(0.95);
+    }
+
+    /* Back navigation button styling */
+    .back-nav-btn {
+      background: rgba(255,255,255,0.3);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #4a3868;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.95rem;
+    }
+
     @media (max-width: 500px) {
       .practice-card {
         padding: 2rem 1.2rem;
       }
       .question-item {
         flex-wrap: wrap;
+      }
+      .go-to-top-btn {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
       }
     }
   </style>
@@ -387,13 +456,16 @@
   <div class="circle"></div>
 </div>
 
+<!-- Go to Top Button -->
+<button class="go-to-top-btn" id="goToTopBtn" title="Go to top">⬆️</button>
+
 <div class="practice-card" id="appCard">
-  <h1>
+  <h1 id="mainTitle">
     <span>✖️</span> Table Sprint <span>📊</span>
   </h1>
 
   <!-- Tabs -->
-  <div class="tab-container">
+  <div class="tab-container" id="tabContainer">
     <button class="tab-btn active" id="practiceTabBtn">📝 Practice</button>
     <button class="tab-btn" id="progressTabBtn">📈 Progress</button>
   </div>
@@ -406,15 +478,18 @@
         <input type="text" id="tablesInput" placeholder="12,13,14" value="12,13,14" autocomplete="off">
         <div class="note">Separate by commas. Numbers between 1 and 20.</div>
       </div>
-      <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+      <div class="flex-row" style="margin-top: 0.5rem;">
         <button class="btn" id="generateBtn">✨ Generate Questions</button>
       </div>
     </div>
 
     <div id="quizSection" class="hidden">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
         <div class="label-icon">📝 Your practice</div>
-        <button class="btn btn-secondary btn-small" id="backBtn">🔙 Change tables</button>
+        <div class="flex-row" style="gap: 0.5rem;">
+          <button class="btn btn-small back-nav-btn" id="backToSetupBtn">🔙 Back</button>
+          <button class="btn btn-tertiary btn-small" id="tryAgainBtn">🔄 Try Again</button>
+        </div>
       </div>
       <div class="questions-grid" id="questionsContainer"></div>
       <div class="hint-text">💡 Press <strong>Enter</strong> to jump to next answer box | Press <strong>Tab</strong> or <strong>Shift+Tab</strong> to navigate</div>
@@ -429,6 +504,11 @@
 
   <!-- Progress Section -->
   <div id="progressSection" class="hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div class="label-icon">📈 Your Progress Dashboard</div>
+      <button class="btn btn-small back-nav-btn" id="backToPracticeFromProgressBtn">🔙 Back to Practice</button>
+    </div>
+    
     <div class="progress-section">
       <div class="label-icon">📊 Overall Performance</div>
       <div class="progress-bar-container">
@@ -442,7 +522,9 @@
       <div id="historyList" style="max-height: 250px; overflow-y: auto;">
         <p style="text-align: center; color: #888;">No practice sessions yet.</p>
       </div>
-      <button class="btn btn-secondary btn-small" id="clearHistoryBtn" style="margin-top: 1rem;">🗑️ Clear History</button>
+      <div class="flex-row" style="margin-top: 1rem; gap: 0.5rem;">
+        <button class="btn btn-secondary btn-small" id="clearHistoryBtn">🗑️ Clear History</button>
+      </div>
     </div>
 
     <div class="progress-section">
@@ -527,6 +609,7 @@
 
     // ============ APP STATE ============
     let currentQuestions = [];
+    let currentTables = [];
     const tablesInput = document.getElementById('tablesInput');
     const generateBtn = document.getElementById('generateBtn');
     const setupSection = document.getElementById('setupSection');
@@ -534,7 +617,9 @@
     const questionsContainer = document.getElementById('questionsContainer');
     const submitBtn = document.getElementById('submitBtn');
     const resultDisplay = document.getElementById('resultDisplay');
-    const backBtn = document.getElementById('backBtn');
+    const backToSetupBtn = document.getElementById('backToSetupBtn');
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    const backToPracticeFromProgressBtn = document.getElementById('backToPracticeFromProgressBtn');
 
     // Tab elements
     const practiceTabBtn = document.getElementById('practiceTabBtn');
@@ -542,20 +627,57 @@
     const practiceSection = document.getElementById('practiceSection');
     const progressSection = document.getElementById('progressSection');
 
+    // Go to Top Button
+    const goToTopBtn = document.getElementById('goToTopBtn');
+
+    // ============ GO TO TOP BUTTON ============
+    function toggleGoToTopButton() {
+      if (window.scrollY > 300 || document.documentElement.scrollTop > 300) {
+        goToTopBtn.classList.add('visible');
+      } else {
+        goToTopBtn.classList.remove('visible');
+      }
+    }
+
+    goToTopBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      // Also scroll the main card into view
+      document.getElementById('mainTitle').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    window.addEventListener('scroll', toggleGoToTopButton);
+    
+    // Also check on page load
+    window.addEventListener('load', toggleGoToTopButton);
+
     // ============ TAB SWITCHING ============
-    practiceTabBtn.addEventListener('click', () => {
+    function switchToPracticeTab() {
       practiceTabBtn.classList.add('active');
       progressTabBtn.classList.remove('active');
       practiceSection.classList.remove('hidden');
       progressSection.classList.add('hidden');
-    });
+      // Scroll to top of practice section
+      document.getElementById('tabContainer').scrollIntoView({ behavior: 'smooth' });
+    }
 
-    progressTabBtn.addEventListener('click', () => {
+    function switchToProgressTab() {
       progressTabBtn.classList.add('active');
       practiceTabBtn.classList.remove('active');
       practiceSection.classList.add('hidden');
       progressSection.classList.remove('hidden');
       renderProgressSection();
+      document.getElementById('tabContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    practiceTabBtn.addEventListener('click', switchToPracticeTab);
+    progressTabBtn.addEventListener('click', switchToProgressTab);
+
+    // Back button from progress to practice
+    backToPracticeFromProgressBtn.addEventListener('click', () => {
+      switchToPracticeTab();
     });
 
     // ============ HELPER FUNCTIONS ============
@@ -605,54 +727,32 @@
       const answerInputs = document.querySelectorAll('.answer-input');
       
       answerInputs.forEach((input, index) => {
-        // Remove existing event listeners by cloning
         const newInput = input.cloneNode(true);
         input.parentNode.replaceChild(newInput, input);
         
-        // Add keydown event for Enter key
         newInput.addEventListener('keydown', function(e) {
           if (e.key === 'Enter') {
-            e.preventDefault(); // Prevent form submission
+            e.preventDefault();
             
             const allInputs = document.querySelectorAll('.answer-input');
             const currentIndex = Array.from(allInputs).indexOf(this);
             
-            // If not the last input, move to next
             if (currentIndex < allInputs.length - 1) {
               allInputs[currentIndex + 1].focus();
-              // Add a subtle animation to show focus transition
               allInputs[currentIndex + 1].style.transform = 'scale(1.05)';
               setTimeout(() => {
                 allInputs[currentIndex + 1].style.transform = 'scale(1)';
               }, 200);
             } else {
-              // If it's the last input, optionally focus on submit button or just stay
               submitBtn.focus();
-              // Brief animation on submit button
               submitBtn.style.transform = 'scale(1.05)';
               setTimeout(() => {
                 submitBtn.style.transform = 'scale(1)';
               }, 200);
             }
           }
-          
-          // Also handle Tab key for forward, Shift+Tab for backward (built-in, but we ensure smooth)
-          if (e.key === 'Tab' && !e.shiftKey) {
-            // Default behavior works, but we can add animation
-            const allInputs = document.querySelectorAll('.answer-input');
-            const currentIndex = Array.from(allInputs).indexOf(this);
-            if (currentIndex < allInputs.length - 1) {
-              setTimeout(() => {
-                allInputs[currentIndex + 1].style.transform = 'scale(1.05)';
-                setTimeout(() => {
-                  allInputs[currentIndex + 1].style.transform = 'scale(1)';
-                }, 200);
-              }, 10);
-            }
-          }
         });
         
-        // Add click event to select all text when focused (for easy replacement)
         newInput.addEventListener('focus', function() {
           this.select();
         });
@@ -687,10 +787,8 @@
         questionsContainer.appendChild(itemDiv);
       });
       
-      // Setup Enter key navigation after rendering
       setupEnterKeyNavigation();
       
-      // Auto-focus on first input
       setTimeout(() => {
         const firstInput = document.querySelector('.answer-input');
         if (firstInput) {
@@ -728,10 +826,8 @@
         }
       });
 
-      // Save to localStorage
       addSession(tablesUsed, correctCount, total);
 
-      // Show result
       resultDisplay.classList.remove('hidden');
       resultDisplay.innerHTML = `
         <span class="correct-badge">✅ ${correctCount} Correct</span>
@@ -741,6 +837,9 @@
       
       resultDisplay.style.transform = 'scale(1.02)';
       setTimeout(() => { resultDisplay.style.transform = 'scale(1)'; }, 150);
+      
+      // Scroll to result
+      resultDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function goToSetup() {
@@ -748,7 +847,9 @@
       setupSection.classList.remove('hidden');
       resultDisplay.classList.add('hidden');
       currentQuestions = [];
+      currentTables = [];
       questionsContainer.innerHTML = '';
+      document.getElementById('tabContainer').scrollIntoView({ behavior: 'smooth' });
     }
 
     function startQuiz(tables) {
@@ -756,11 +857,34 @@
         alert('Please enter at least one table number (e.g., 12,13,14)');
         return;
       }
+      currentTables = tables;
       currentQuestions = createQuestions(tables);
       renderQuestions(currentQuestions);
       setupSection.classList.add('hidden');
       quizSection.classList.remove('hidden');
       resultDisplay.classList.add('hidden');
+      document.getElementById('tabContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Try Again function - resets current quiz with new random questions
+    function tryAgain() {
+      if (currentTables.length === 0) {
+        alert('No tables selected. Please go back and select tables first.');
+        return;
+      }
+      // Generate new questions with same tables
+      currentQuestions = createQuestions(currentTables);
+      renderQuestions(currentQuestions);
+      resultDisplay.classList.add('hidden');
+      
+      // Reset any input styling
+      document.querySelectorAll('.answer-input').forEach(inp => {
+        inp.style.borderColor = '#d4c0f0';
+        inp.style.backgroundColor = 'white';
+      });
+      
+      // Scroll to questions
+      questionsContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
     // ============ PROGRESS RENDERING ============
@@ -846,8 +970,12 @@
       startQuiz(tables);
     });
 
-    backBtn.addEventListener('click', () => {
+    backToSetupBtn.addEventListener('click', () => {
       goToSetup();
+    });
+
+    tryAgainBtn.addEventListener('click', () => {
+      tryAgain();
     });
 
     submitBtn.addEventListener('click', () => {
@@ -856,10 +984,6 @@
         return;
       }
       evaluateAnswers();
-      
-      setTimeout(() => {
-        progressTabBtn.click();
-      }, 1500);
     });
 
     tablesInput.addEventListener('keypress', (e) => {
@@ -873,6 +997,15 @@
       if (confirm('Are you sure you want to clear all progress history? This cannot be undone.')) {
         localStorage.removeItem(STORAGE_KEY);
         renderProgressSection();
+      }
+    });
+
+    // Keyboard shortcut: Ctrl+Shift+T to scroll to top
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('mainTitle').scrollIntoView({ behavior: 'smooth' });
       }
     });
 
