@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>✨ Times Table Practice | Track Your Progress</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(145deg, #2b1e4a 0%, #1a1a3e 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      margin: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 215, 150, 0.15);
+      animation: float 18s infinite ease-in-out;
+    }
+
+    .circle:nth-child(1) { width: 200px; height: 200px; top: 10%; left: 5%; background: rgba(255, 179, 102, 0.2); animation-duration: 20s; }
+    .circle:nth-child(2) { width: 150px; height: 150px; bottom: 15%; right: 8%; background: rgba(180, 130, 255, 0.2); animation-duration: 25s; animation-delay: -5s; }
+    .circle:nth-child(3) { width: 100px; height: 100px; top: 70%; left: 15%; background: rgba(255, 150, 200, 0.2); animation-duration: 22s; animation-delay: -10s; }
+    .circle:nth-child(4) { width: 180px; height: 180px; bottom: 5%; left: 75%; background: rgba(120, 200, 255, 0.15); animation-duration: 28s; }
+    .circle:nth-child(5) { width: 130px; height: 130px; top: 30%; right: 20%; background: rgba(255, 200, 120, 0.18); animation-duration: 19s; animation-delay: -7s; }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg) scale(1); }
+      50% { transform: translateY(-35px) rotate(8deg) scale(1.05); }
+      100% { transform: translateY(0px) rotate(0deg) scale(1); }
+    }
+
+    .practice-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 750px;
+      background: linear-gradient(135deg, rgba(255, 245, 250, 0.9) 0%, rgba(240, 235, 255, 0.85) 100%);
+      backdrop-filter: blur(18px);
+      border-radius: 3.5rem;
+      box-shadow: 0 30px 55px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 215, 180, 0.5);
+      padding: 2.5rem 2rem;
+      transition: all 0.3s ease;
+      animation: fadeSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 2.3rem;
+      color: #3d2a5c;
+      margin-bottom: 1.8rem;
+      letter-spacing: -0.5px;
+      text-shadow: 2px 2px 0 rgba(255, 255, 200, 0.6);
+    }
+    h1 span {
+      background: #ffd78b;
+      padding: 0.2rem 0.7rem;
+      border-radius: 50px;
+      font-size: 2rem;
+    }
+
+    .tab-container {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255,255,255,0.5);
+      border-radius: 3rem;
+      padding: 0.4rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border: none;
+      background: transparent;
+      border-radius: 2.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #4a3868;
+    }
+
+    .tab-btn.active {
+      background: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      color: #f7775e;
+      font-weight: 700;
+    }
+
+    .input-group {
+      background: #ffffffdd;
+      backdrop-filter: blur(10px);
+      border-radius: 2.5rem;
+      padding: 1.8rem 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .label-icon {
+      font-weight: 600;
+      color: #4a3868;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-bottom: 0.6rem;
+      font-size: 1.1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border: 2px solid #e0cffc;
+      border-radius: 3rem;
+      font-size: 1.2rem;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      background: white;
+      transition: all 0.25s;
+      outline: none;
+      color: #2d2042;
+      letter-spacing: 0.3px;
+    }
+
+    input:focus {
+      border-color: #b38add;
+      box-shadow: 0 0 0 4px rgba(179, 138, 221, 0.4);
+    }
+
+    .btn {
+      background: #f9a66c;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 0.9rem 2rem;
+      border-radius: 3rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.25s;
+      background: linear-gradient(135deg, #f9a66c, #f7775e);
+      box-shadow: 0 10px 18px rgba(247, 119, 94, 0.4);
+      border: 1px solid rgba(255,255,200,0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 25px rgba(247, 119, 94, 0.55);
+      background: linear-gradient(135deg, #ffb07c, #f9816a);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #b294d6, #8f6bb3);
+      box-shadow: 0 10px 18px rgba(143, 107, 179, 0.4);
+    }
+
+    .btn-small {
+      padding: 0.5rem 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .questions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 2rem 0 1.8rem;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .question-item {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(6px);
+      border-radius: 2rem;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #31234a;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,240,0.9);
+      transition: 0.2s;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.92); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .question-item span {
+      background: #fff3e3;
+      padding: 0.3rem 1rem;
+      border-radius: 2rem;
+      font-size: 1.6rem;
+      color: #a94e2c;
+    }
+
+    .answer-input {
+      width: 90px;
+      padding: 0.5rem 0.8rem;
+      font-size: 1.4rem;
+      text-align: center;
+      border: 2px solid #d4c0f0;
+      border-radius: 2rem;
+      font-weight: 700;
+      background: white;
+      transition: all 0.3s ease;
+    }
+
+    .answer-input:focus {
+      border-color: #f9a66c;
+      box-shadow: 0 0 0 4px rgba(249, 166, 108, 0.3);
+      transform: scale(1.05);
+    }
+
+    .result-box {
+      margin-top: 1.8rem;
+      background: #f3ecff;
+      border-radius: 2rem;
+      padding: 1.2rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #382a4e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      transition: 0.3s;
+    }
+
+    .correct-badge {
+      background: #b5e7b5;
+      padding: 0.4rem 1.5rem;
+      border-radius: 3rem;
+      color: #1f4f2b;
+    }
+    .wrong-badge {
+      background: #fbc2c2;
+      padding: 0.4rem 1.5rem;
+      border-radius: 3rem;
+      color: #941c2c;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: #5b4a6b;
+      margin-top: 0.5rem;
+    }
+
+    .hint-text {
+      font-size: 0.85rem;
+      color: #888;
+      text-align: center;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .progress-section {
+      background: rgba(255,255,255,0.7);
+      border-radius: 2rem;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .progress-bar-container {
+      background: #e0d5f0;
+      border-radius: 2rem;
+      height: 25px;
+      margin: 0.5rem 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #82d482, #4caf50);
+      border-radius: 2rem;
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 1rem;
+      background: white;
+      border-radius: 1.5rem;
+      margin: 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .improvement-indicator {
+      font-size: 0.9rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: 1rem;
+    }
+
+    .improved { background: #c8f7c5; color: #1b5e20; }
+    .declined { background: #ffd9d9; color: #b71c1c; }
+    .same { background: #fff3e0; color: #e65100; }
+
+    @media (max-width: 500px) {
+      .practice-card {
+        padding: 2rem 1.2rem;
+      }
+      .question-item {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-animation">
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+</div>
+
+<div class="practice-card" id="appCard">
+  <h1>
+    <span>✖️</span> Table Sprint <span>📊</span>
+  </h1>
+
+  <!-- Tabs -->
+  <div class="tab-container">
+    <button class="tab-btn active" id="practiceTabBtn">📝 Practice</button>
+    <button class="tab-btn" id="progressTabBtn">📈 Progress</button>
+  </div>
+
+  <!-- Practice Section -->
+  <div id="practiceSection">
+    <div id="setupSection">
+      <div class="input-group">
+        <div class="label-icon">📋 Tables to practice (e.g., 12,13,14)</div>
+        <input type="text" id="tablesInput" placeholder="12,13,14" value="12,13,14" autocomplete="off">
+        <div class="note">Separate by commas. Numbers between 1 and 20.</div>
+      </div>
+      <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+        <button class="btn" id="generateBtn">✨ Generate Questions</button>
+      </div>
+    </div>
+
+    <div id="quizSection" class="hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <div class="label-icon">📝 Your practice</div>
+        <button class="btn btn-secondary btn-small" id="backBtn">🔙 Change tables</button>
+      </div>
+      <div class="questions-grid" id="questionsContainer"></div>
+      <div class="hint-text">💡 Press <strong>Enter</strong> to jump to next answer box | Press <strong>Tab</strong> or <strong>Shift+Tab</strong> to navigate</div>
+      
+      <div class="flex-row" style="margin: 1.5rem 0 0.5rem;">
+        <button class="btn" id="submitBtn">✅ Submit Answers</button>
+      </div>
+      
+      <div id="resultDisplay" class="result-box hidden"></div>
+    </div>
+  </div>
+
+  <!-- Progress Section -->
+  <div id="progressSection" class="hidden">
+    <div class="progress-section">
+      <div class="label-icon">📊 Overall Performance</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="overallProgressBar" style="width: 0%;">0%</div>
+      </div>
+      <div style="text-align: center; margin-top: 0.5rem; font-weight: 600;" id="totalStats"></div>
+    </div>
+
+    <div class="progress-section">
+      <div class="label-icon">🕒 Recent Sessions</div>
+      <div id="historyList" style="max-height: 250px; overflow-y: auto;">
+        <p style="text-align: center; color: #888;">No practice sessions yet.</p>
+      </div>
+      <button class="btn btn-secondary btn-small" id="clearHistoryBtn" style="margin-top: 1rem;">🗑️ Clear History</button>
+    </div>
+
+    <div class="progress-section">
+      <div class="label-icon">📈 Improvement</div>
+      <div id="improvementMessage" style="text-align: center; padding: 1rem;">
+        Complete at least 2 sessions to see improvement.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ============ LOCAL STORAGE MANAGEMENT ============
+    const STORAGE_KEY = 'multiplication_practice_progress';
+    
+    function getProgressData() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          return { sessions: [] };
+        }
+      }
+      return { sessions: [] };
+    }
+
+    function saveProgressData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function addSession(tables, correct, total) {
+      const data = getProgressData();
+      const session = {
+        date: new Date().toISOString(),
+        tables: tables,
+        correct: correct,
+        total: total,
+        percentage: total > 0 ? Math.round((correct / total) * 100) : 0
+      };
+      data.sessions.push(session);
+      if (data.sessions.length > 50) {
+        data.sessions = data.sessions.slice(-50);
+      }
+      saveProgressData(data);
+      return data;
+    }
+
+    function getOverallStats() {
+      const data = getProgressData();
+      if (data.sessions.length === 0) {
+        return { totalQuestions: 0, totalCorrect: 0, percentage: 0 };
+      }
+      let totalQuestions = 0;
+      let totalCorrect = 0;
+      data.sessions.forEach(s => {
+        totalQuestions += s.total;
+        totalCorrect += s.correct;
+      });
+      return {
+        totalQuestions,
+        totalCorrect,
+        percentage: totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0
+      };
+    }
+
+    function getImprovement() {
+      const data = getProgressData();
+      if (data.sessions.length < 2) return null;
+      
+      const recent = data.sessions.slice(-5);
+      const firstRecent = recent[0];
+      const lastRecent = recent[recent.length - 1];
+      
+      return {
+        firstPercentage: firstRecent.percentage,
+        lastPercentage: lastRecent.percentage,
+        difference: lastRecent.percentage - firstRecent.percentage
+      };
+    }
+
+    // ============ APP STATE ============
+    let currentQuestions = [];
+    const tablesInput = document.getElementById('tablesInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const setupSection = document.getElementById('setupSection');
+    const quizSection = document.getElementById('quizSection');
+    const questionsContainer = document.getElementById('questionsContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultDisplay = document.getElementById('resultDisplay');
+    const backBtn = document.getElementById('backBtn');
+
+    // Tab elements
+    const practiceTabBtn = document.getElementById('practiceTabBtn');
+    const progressTabBtn = document.getElementById('progressTabBtn');
+    const practiceSection = document.getElementById('practiceSection');
+    const progressSection = document.getElementById('progressSection');
+
+    // ============ TAB SWITCHING ============
+    practiceTabBtn.addEventListener('click', () => {
+      practiceTabBtn.classList.add('active');
+      progressTabBtn.classList.remove('active');
+      practiceSection.classList.remove('hidden');
+      progressSection.classList.add('hidden');
+    });
+
+    progressTabBtn.addEventListener('click', () => {
+      progressTabBtn.classList.add('active');
+      practiceTabBtn.classList.remove('active');
+      practiceSection.classList.add('hidden');
+      progressSection.classList.remove('hidden');
+      renderProgressSection();
+    });
+
+    // ============ HELPER FUNCTIONS ============
+    function parseTables(str) {
+      if (!str.trim()) return [];
+      const parts = str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+      const tables = [];
+      for (let part of parts) {
+        const num = Number(part);
+        if (isNaN(num) || !Number.isInteger(num) || num < 1 || num > 20) {
+          return null;
+        }
+        tables.push(num);
+      }
+      return [...new Set(tables)];
+    }
+
+    function randomMultiplier() {
+      return Math.floor(Math.random() * 10) + 1;
+    }
+
+    function createQuestions(tables) {
+      const questions = [];
+      for (let table of tables) {
+        for (let i = 0; i < 2; i++) {
+          const multiplier = randomMultiplier();
+          questions.push({
+            table: table,
+            multiplier: multiplier,
+            correctAnswer: table * multiplier,
+          });
+        }
+      }
+      return shuffleArray(questions);
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // ============ AUTO-FOCUS ON ENTER ============
+    function setupEnterKeyNavigation() {
+      const answerInputs = document.querySelectorAll('.answer-input');
+      
+      answerInputs.forEach((input, index) => {
+        // Remove existing event listeners by cloning
+        const newInput = input.cloneNode(true);
+        input.parentNode.replaceChild(newInput, input);
+        
+        // Add keydown event for Enter key
+        newInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent form submission
+            
+            const allInputs = document.querySelectorAll('.answer-input');
+            const currentIndex = Array.from(allInputs).indexOf(this);
+            
+            // If not the last input, move to next
+            if (currentIndex < allInputs.length - 1) {
+              allInputs[currentIndex + 1].focus();
+              // Add a subtle animation to show focus transition
+              allInputs[currentIndex + 1].style.transform = 'scale(1.05)';
+              setTimeout(() => {
+                allInputs[currentIndex + 1].style.transform = 'scale(1)';
+              }, 200);
+            } else {
+              // If it's the last input, optionally focus on submit button or just stay
+              submitBtn.focus();
+              // Brief animation on submit button
+              submitBtn.style.transform = 'scale(1.05)';
+              setTimeout(() => {
+                submitBtn.style.transform = 'scale(1)';
+              }, 200);
+            }
+          }
+          
+          // Also handle Tab key for forward, Shift+Tab for backward (built-in, but we ensure smooth)
+          if (e.key === 'Tab' && !e.shiftKey) {
+            // Default behavior works, but we can add animation
+            const allInputs = document.querySelectorAll('.answer-input');
+            const currentIndex = Array.from(allInputs).indexOf(this);
+            if (currentIndex < allInputs.length - 1) {
+              setTimeout(() => {
+                allInputs[currentIndex + 1].style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                  allInputs[currentIndex + 1].style.transform = 'scale(1)';
+                }, 200);
+              }, 10);
+            }
+          }
+        });
+        
+        // Add click event to select all text when focused (for easy replacement)
+        newInput.addEventListener('focus', function() {
+          this.select();
+        });
+      });
+    }
+
+    function renderQuestions(questions) {
+      questionsContainer.innerHTML = '';
+      if (!questions.length) {
+        questionsContainer.innerHTML = '<p style="text-align:center; color:#555;">No questions generated.</p>';
+        return;
+      }
+
+      questions.forEach((q, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'question-item';
+        itemDiv.style.animationDelay = `${index * 0.05}s`;
+
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = `${q.multiplier} × ${q.table} =`;
+        
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'answer-input';
+        input.placeholder = '?';
+        input.dataset.index = index;
+        input.dataset.correct = q.correctAnswer;
+        input.value = '';
+        
+        itemDiv.appendChild(labelSpan);
+        itemDiv.appendChild(input);
+        questionsContainer.appendChild(itemDiv);
+      });
+      
+      // Setup Enter key navigation after rendering
+      setupEnterKeyNavigation();
+      
+      // Auto-focus on first input
+      setTimeout(() => {
+        const firstInput = document.querySelector('.answer-input');
+        if (firstInput) {
+          firstInput.focus();
+          firstInput.select();
+        }
+      }, 100);
+    }
+
+    function evaluateAnswers() {
+      const inputs = document.querySelectorAll('.answer-input');
+      let correctCount = 0;
+      let wrongCount = 0;
+      const total = inputs.length;
+      const tablesUsed = [...new Set(currentQuestions.map(q => q.table))];
+      
+      inputs.forEach(input => {
+        const userValue = input.value.trim();
+        const correct = Number(input.dataset.correct);
+        if (userValue === '') {
+          wrongCount++;
+          input.style.borderColor = '#f08a8a';
+          input.style.backgroundColor = '#fff0f0';
+        } else {
+          const userNum = Number(userValue);
+          if (!isNaN(userNum) && userNum === correct) {
+            correctCount++;
+            input.style.borderColor = '#8fc98f';
+            input.style.backgroundColor = '#edffee';
+          } else {
+            wrongCount++;
+            input.style.borderColor = '#f08a8a';
+            input.style.backgroundColor = '#fff0f0';
+          }
+        }
+      });
+
+      // Save to localStorage
+      addSession(tablesUsed, correctCount, total);
+
+      // Show result
+      resultDisplay.classList.remove('hidden');
+      resultDisplay.innerHTML = `
+        <span class="correct-badge">✅ ${correctCount} Correct</span>
+        <span class="wrong-badge">❌ ${wrongCount} Wrong</span>
+        <span style="font-weight:500;">(out of ${total})</span>
+      `;
+      
+      resultDisplay.style.transform = 'scale(1.02)';
+      setTimeout(() => { resultDisplay.style.transform = 'scale(1)'; }, 150);
+    }
+
+    function goToSetup() {
+      quizSection.classList.add('hidden');
+      setupSection.classList.remove('hidden');
+      resultDisplay.classList.add('hidden');
+      currentQuestions = [];
+      questionsContainer.innerHTML = '';
+    }
+
+    function startQuiz(tables) {
+      if (!tables || tables.length === 0) {
+        alert('Please enter at least one table number (e.g., 12,13,14)');
+        return;
+      }
+      currentQuestions = createQuestions(tables);
+      renderQuestions(currentQuestions);
+      setupSection.classList.add('hidden');
+      quizSection.classList.remove('hidden');
+      resultDisplay.classList.add('hidden');
+    }
+
+    // ============ PROGRESS RENDERING ============
+    function renderProgressSection() {
+      const data = getProgressData();
+      const stats = getOverallStats();
+      
+      const progressBar = document.getElementById('overallProgressBar');
+      progressBar.style.width = stats.percentage + '%';
+      progressBar.textContent = stats.percentage + '%';
+      
+      document.getElementById('totalStats').textContent = 
+        `${stats.totalCorrect} correct out of ${stats.totalQuestions} total questions`;
+      
+      const historyList = document.getElementById('historyList');
+      if (data.sessions.length === 0) {
+        historyList.innerHTML = '<p style="text-align: center; color: #888;">No practice sessions yet.</p>';
+      } else {
+        historyList.innerHTML = data.sessions.slice().reverse().slice(0, 10).map((session, idx) => {
+          const date = new Date(session.date);
+          const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+          const tablesStr = session.tables.join(', ');
+          return `
+            <div class="history-item">
+              <div>
+                <div style="font-size:0.9rem; color:#666;">${dateStr}</div>
+                <div>Tables: ${tablesStr}</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:700;">${session.correct}/${session.total}</div>
+                <div style="color:${session.percentage >= 80 ? '#2e7d32' : session.percentage >= 50 ? '#f57c00' : '#c62828'}">
+                  ${session.percentage}%
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      const improvementDiv = document.getElementById('improvementMessage');
+      const improvement = getImprovement();
+      if (!improvement) {
+        improvementDiv.innerHTML = '📋 Complete at least 2 sessions to see improvement trend.';
+      } else {
+        const diff = improvement.difference;
+        let icon, message, className;
+        if (diff > 5) {
+          icon = '🚀';
+          message = `Great improvement! You're getting better! (+${diff}%)`;
+          className = 'improved';
+        } else if (diff < -5) {
+          icon = '💪';
+          message = `Keep practicing! You'll improve soon. (${diff}%)`;
+          className = 'declined';
+        } else {
+          icon = '👍';
+          message = `Steady performance. Consistency is key! (${diff >= 0 ? '+' : ''}${diff}%)`;
+          className = 'same';
+        }
+        improvementDiv.innerHTML = `
+          <div style="font-size:2rem;">${icon}</div>
+          <div style="font-weight:700; margin:0.5rem 0;">${message}</div>
+          <div style="font-size:0.9rem; color:#666;">
+            Last 5 sessions: ${improvement.firstPercentage}% → ${improvement.lastPercentage}%
+          </div>
+          <span class="improvement-indicator ${className}">${diff > 0 ? '↑' : diff < 0 ? '↓' : '→'} ${Math.abs(diff)}%</span>
+        `;
+      }
+    }
+
+    // ============ EVENT LISTENERS ============
+    generateBtn.addEventListener('click', () => {
+      const raw = tablesInput.value.trim();
+      const tables = parseTables(raw);
+      if (tables === null) {
+        alert('❌ Invalid input. Use numbers between 1 and 20, separated by commas. Example: 12,13,14');
+        return;
+      }
+      if (tables.length === 0) {
+        alert('Please enter at least one table number.');
+        return;
+      }
+      startQuiz(tables);
+    });
+
+    backBtn.addEventListener('click', () => {
+      goToSetup();
+    });
+
+    submitBtn.addEventListener('click', () => {
+      if (!currentQuestions.length) {
+        alert('No questions to evaluate.');
+        return;
+      }
+      evaluateAnswers();
+      
+      setTimeout(() => {
+        progressTabBtn.click();
+      }, 1500);
+    });
+
+    tablesInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        generateBtn.click();
+      }
+    });
+
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all progress history? This cannot be undone.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderProgressSection();
+      }
+    });
+
+  })();
+</script>
+</body>
+</html>
